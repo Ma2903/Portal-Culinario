@@ -1,45 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import {
-  FaPizzaSlice, FaBookOpen, FaBirthdayCake, FaCoffee,
+  FaPizzaSlice, FaBookOpen, FaBirthdayCake,
   FaPlusCircle, FaArrowLeft, FaMoon, FaSun, FaUtensils, FaHeart
 } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import './App.css';
 
 const socket = io("http://localhost:3001");
 
 const roomDetails = {
-  'pizza-vs-hamburguer': { 
-    name: 'Pizza vs. Hambúrguer', 
+  'pizza-vs-hamburguer': {
+    name: 'Pizza vs. Hambúrguer',
     icon: <FaPizzaSlice />,
     description: 'Debate épico entre os clássicos da culinária mundial'
   },
-  'receitas-da-vovo': { 
-    name: 'Receitas da Vovó', 
+  'receitas-da-vovo': {
+    name: 'Receitas da Vovó',
     icon: <FaBookOpen />,
     description: 'Compartilhe e descubra receitas tradicionais de família'
   },
-  'dicas-confeitaria': { 
-    name: 'Dicas de Confeitaria', 
+  'dicas-confeitaria': {
+    name: 'Dicas de Confeitaria',
     icon: <FaBirthdayCake />,
     description: 'Segredos e técnicas para criar doces perfeitos'
   },
 };
 
 function App() {
-  const [page, setPage] = useState('username');
-  const [username, setUsername] = useState('');
-  const [joinedRooms, setJoinedRooms] = useState([]);
-  const [activeRoom, setActiveRoom] = useState(null);
+  const [username, setUsername] = useState(() => localStorage.getItem('chat-username') || '');
+  const [page, setPage] = useState(() => (localStorage.getItem('chat-username') ? 'chat' : 'username'));
+  const [joinedRooms, setJoinedRooms] = useState(() => JSON.parse(localStorage.getItem('chat-joinedRooms')) || []);
+  const [activeRoom, setActiveRoom] = useState(() => localStorage.getItem('chat-activeRoom') || null);
+  
   const [messages, setMessages] = useState({});
   const [currentMessage, setCurrentMessage] = useState('');
-  const [isLobbyModalOpen, setIsLobbyModalOpen] = useState(false);
-  const [theme, setTheme] = useState('light');
+  const [isLobbyModalOpen, setIsLobbyModalOpen] = useState(() => !localStorage.getItem('chat-activeRoom') && localStorage.getItem('chat-username'));
+  const [theme, setTheme] = useState(() => localStorage.getItem('chat-theme') || 'light');
+  const chatBodyRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem('chat-username', username);
+    localStorage.setItem('chat-joinedRooms', JSON.stringify(joinedRooms));
+    localStorage.setItem('chat-activeRoom', activeRoom || '');
+  }, [username, joinedRooms, activeRoom]);
+
+  // Efeito dedicado a gerenciar o tema
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('chat-theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   const handleLogin = (name) => {
@@ -51,11 +65,30 @@ function App() {
   };
 
   const handleLogout = () => {
-    setUsername('');
-    setJoinedRooms([]);
-    setActiveRoom(null);
-    setMessages({});
-    setPage('username');
+    Swal.fire({
+      title: 'Você tem certeza?',
+      text: "Você será desconectado do chat.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, sair!',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        popup: 'swal-popup-custom',
+        confirmButton: 'swal-confirm-button-custom',
+        cancelButton: 'swal-cancel-button-custom'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('chat-username');
+        localStorage.removeItem('chat-joinedRooms');
+        localStorage.removeItem('chat-activeRoom');
+        setUsername('');
+        setJoinedRooms([]);
+        setActiveRoom(null);
+        setMessages({});
+        setPage('username');
+      }
+    });
   };
 
   const handleJoinRoom = (roomKey) => {
@@ -91,6 +124,8 @@ function App() {
   };
 
   useEffect(() => {
+    joinedRooms.forEach(room => socket.emit('joinRoom', room));
+
     const handleReceiveMessage = (data) => {
       const incomingMessage = { ...data.content, senderId: 'other' };
       setMessages(prev => ({
@@ -104,16 +139,30 @@ function App() {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, []);
+  }, [joinedRooms]);
+
+  useEffect(() => {
+    if (chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [messages[activeRoom]]);
 
   if (page === 'username') {
-    return <UsernameScreen onLogin={handleLogin} />;
+    return (
+      <div className="login-page-wrapper">
+        <UsernameScreen onLogin={handleLogin} />
+      </div>
+    );
   }
 
   return (
     <div className="chat-container">
       {isLobbyModalOpen && (
-        <LobbyModal onJoin={handleJoinRoom} onBack={() => joinedRooms.length > 0 && setIsLobbyModalOpen(false)} />
+        <LobbyModal
+          onJoin={handleJoinRoom}
+          onBack={() => setIsLobbyModalOpen(false)}
+          showBackButton={joinedRooms.length > 0}
+        />
       )}
 
       <div className="sidebar">
@@ -130,14 +179,14 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="theme-toggle" onClick={toggleTheme}>
-            <div className="toggle-icons"><FaSun size={14} /></div>
-            <label className="toggle-switch">
-              <input type="checkbox" checked={theme === 'dark'} readOnly />
-              <span className="slider"></span>
-            </label>
-            <div className="toggle-icons"><FaMoon size={12} /></div>
-          </div>
+          <div className="theme-toggle">
+          <div className="toggle-icons" onClick={toggleTheme}><FaSun size={14} /></div>
+          <label className="toggle-switch" onClick={toggleTheme}>
+            <input type="checkbox" checked={theme === 'dark'} readOnly style={{ pointerEvents: 'none' }} />
+            <span className="slider"></span>
+          </label>
+          <div className="toggle-icons" onClick={toggleTheme}><FaMoon size={12} /></div>
+        </div>
           <button onClick={handleLogout} className="logout-button">Sair</button>
         </div>
         <div className="chat-list">
@@ -172,7 +221,7 @@ function App() {
                 <p>{roomDetails[activeRoom].description}</p>
               </div>
             </div>
-            <div className="chat-body">
+            <div className="chat-body" ref={chatBodyRef}>
               {(messages[activeRoom] || []).map((msg, index) => (
                 <div key={index} className={`message-wrapper ${msg.senderId === 'me' ? 'sent' : 'received'}`}>
                   <div className="avatar">
@@ -225,10 +274,12 @@ const UsernameScreen = ({ onLogin }) => {
   );
 };
 
-const LobbyModal = ({ onJoin, onBack }) => (
+const LobbyModal = ({ onJoin, onBack, showBackButton }) => (
   <div className="modal-overlay">
     <div className="lobby-container card">
-      <button onClick={onBack} className="back-button"><FaArrowLeft /></button>
+      {showBackButton && (
+        <button onClick={onBack} className="back-button"><FaArrowLeft /></button>
+      )}
       <h2>Escolha uma sala para conversar:</h2>
       <div className="room-list">
         {Object.keys(roomDetails).map(roomKey => (

@@ -1,9 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+/* --- Paleta de Cores (Modo Claro - Ciano & Branco) --- */
+:root {
+  --primary-color: #00BCD4; /* Ciano Principal */
+  --primary-hover: #00ACC1; /* Ciano mais escuro para hover */
+  --secondary-color: #80DEEA; /* Ciano claro */
+  --accent-color: #4caf50; /* Verde para status 'online' */
+  --background-color: #FFFFFF; /* Fundo branco */
+  --sidebar-background: #FFFFFF; /* Fundo da sidebar branco */
+  --chat-background: linear-gradient(135deg, #F0FFFF 0%, #FFFFFF 100%); /* Gradiente sutil de ciano para branco */
+  --text-primary: #000000; /* Texto preto */
+  --text-secondary: #00796B; /* Ciano escuro para textos secundários */
+  --text-muted: #4DD0E1; /* Ciano médio para detalhes */
+  --border-color: #B2EBF2; /* Borda em ciano bem claro */
+  --sent-bubble-background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%); /* Gradiente ciano para balão de envio */
+  --received-bubble-background: #F0F0F0; /* Cinza bem claro para balão de recebimento */
+  --hover-background: #E0F7FA; /* Ciano super claro para hover */
+  --active-background: #B2EBF2; /* Ciano claro para item ativo */
+  --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 188, 212, 0.1), 0 4px 6px -2px rgba(0, 188, 212, 0.05);
+  --gradient-primary: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
+  --gradient-secondary: linear-gradient(135deg, #26C6DA 0%, #00838F 100%);
+}
+
+/* --- Paleta de Cores (Modo Escuro - Preto & Ciano) --- */
+[data-theme='dark'] {
+  --primary-color: #4DD0E1; /* Ciano brilhante */
+  --primary-hover: #80DEEA; /* Ciano mais brilhante para hover */
+  --secondary-color: #26C6DA; /* Outro tom de ciano */
+  --accent-color: #66bb6a; /* Verde para status 'online' */
+  --background-color: #000000; /* Fundo preto */
+  --sidebar-background: #010d13; /* Fundo da sidebar quase preto */
+  --chat-background: linear-gradient(135deg, #000000 0%, #001f24 100%); /* Gradiente de preto para ciano escuro */
+  --text-primary: #E0F7FA; /* Texto em ciano muito claro */
+  --text-secondary: #B2EBF2; /* Texto em ciano claro */
+  --text-muted: #4DD0E1; /* Ciano médio para detalhes */
+  --border-color: #004D40; /* Borda em ciano escuro */
+  --sent-bubble-background: linear-gradient(135deg, #0097A7 0%, #006064 100%); /* Gradiente ciano para balão de envio */
+  --received-bubble-background: #012328; /* Ciano bem escuro para balão de recebimento */
+  --hover-background: #011f26; /* Ciano escuro para hover */
+  --active-background: #013036; /* Ciano escuro mais intenso para item ativo */
+  --box-shadow: 0 4px 6px -1px rgba(0, 200, 220, 0.1), 0 2px 4px -1px rgba(0, 200, 220, 0.06);
+  --box-shadow-lg: 0 10px 15px -3px rgba(0, 200, 220, 0.1), 0 4px 6px -2px rgba(0, 200, 220, 0.05);
+  --gradient-primary: linear-gradient(135deg, #4DD0E1 0%, #26C6DA 100%);
+  --gradient-secondary: linear-gradient(135deg, #00BCD4 0%, #00838F 100%);
+}
 
 body {
   margin: 0;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--background-color); 
+  background-color: var(--background-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
