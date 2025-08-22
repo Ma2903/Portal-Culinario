@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import {
-  FaPizzaSlice, FaBookOpen, FaBirthdayCake,
-  FaPlusCircle, FaArrowLeft, FaMoon, FaSun
+  FaPizzaSlice, FaBookOpen, FaBirthdayCake, FaCoffee,
+  FaPlusCircle, FaArrowLeft, FaMoon, FaSun, FaUtensils, FaHeart
 } from 'react-icons/fa';
 import './App.css';
 
 const socket = io("http://localhost:3001");
 
 const roomDetails = {
-  'pizza-vs-hamburguer': { name: 'Pizza vs. Hambúrguer', icon: <FaPizzaSlice /> },
-  'receitas-da-vovo': { name: 'Receitas da Vovó', icon: <FaBookOpen /> },
-  'dicas-confeitaria': { name: 'Dicas de Confeitaria', icon: <FaBirthdayCake /> },
+  'pizza-vs-hamburguer': { 
+    name: 'Pizza vs. Hambúrguer', 
+    icon: <FaPizzaSlice />,
+    description: 'Debate épico entre os clássicos da culinária mundial'
+  },
+  'receitas-da-vovo': { 
+    name: 'Receitas da Vovó', 
+    icon: <FaBookOpen />,
+    description: 'Compartilhe e descubra receitas tradicionais de família'
+  },
+  'dicas-confeitaria': { 
+    name: 'Dicas de Confeitaria', 
+    icon: <FaBirthdayCake />,
+    description: 'Segredos e técnicas para criar doces perfeitos'
+  },
 };
 
 function App() {
@@ -106,7 +118,18 @@ function App() {
 
       <div className="sidebar">
         <div className="sidebar-header">
-          <h3>Olá, {username}</h3>
+          <div className="user-info">
+            <div className="user-avatar">
+              {username.charAt(0).toUpperCase()}
+            </div>
+            <div className="user-status">
+              <div className="user-name">Olá, {username}</div>
+              <div className="online-indicator">
+                <div className="status-dot"></div>
+                Online
+              </div>
+            </div>
+          </div>
           <div className="theme-toggle" onClick={toggleTheme}>
             <div className="toggle-icons"><FaSun size={14} /></div>
             <label className="toggle-switch">
@@ -125,7 +148,10 @@ function App() {
               onClick={() => setActiveRoom(roomKey)}
             >
               <div className="chat-item-icon">{roomDetails[roomKey].icon}</div>
-              <div className="chat-item-name">{roomDetails[roomKey].name}</div>
+              <div className="chat-item-info">
+                <div className="chat-item-name">{roomDetails[roomKey].name}</div>
+                <div className="chat-item-preview">Toque para abrir</div>
+              </div>
             </div>
           ))}
         </div>
@@ -141,7 +167,10 @@ function App() {
           <div className="chat-window-active">
             <div className="chat-header">
               <div className="chat-header-icon">{roomDetails[activeRoom].icon}</div>
-              <p>{roomDetails[activeRoom].name}</p>
+              <div className="chat-header-info">
+                <h3>{roomDetails[activeRoom].name}</h3>
+                <p>{roomDetails[activeRoom].description}</p>
+              </div>
             </div>
             <div className="chat-body">
               {(messages[activeRoom] || []).map((msg, index) => (
@@ -167,8 +196,11 @@ function App() {
           </div>
         ) : (
           <div className="no-chat-selected">
+            <div className="welcome-icon">
+              <FaUtensils />
+            </div>
             <h2>Selecione uma sala para começar a conversar!</h2>
-            <p>Ou entre em uma nova sala clicando no botão na barra lateral.</p>
+            <p>Explore nossas salas temáticas e compartilhe sua paixão pela culinária com outros entusiastas!</p>
           </div>
         )}
       </div>
@@ -180,13 +212,15 @@ const UsernameScreen = ({ onLogin }) => {
   const [name, setName] = useState('');
   return (
     <div className="username-container card">
-      <h1>🍽️ Bate-Papo Culinário</h1>
+      <h1><FaUtensils /> Bate-Papo Culinário</h1>
       <h2>Como podemos te chamar?</h2>
       <input type="text" placeholder="Digite seu nome..." value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyPress={(e) => e.key === 'Enter' && onLogin(name)}
       />
-      <button onClick={() => onLogin(name)}>Entrar</button>
+      <button onClick={() => onLogin(name)}>
+        <FaHeart /> Entrar no Chat
+      </button>
     </div>
   );
 };
@@ -200,7 +234,10 @@ const LobbyModal = ({ onJoin, onBack }) => (
         {Object.keys(roomDetails).map(roomKey => (
           <div key={roomKey} className="room-card card" onClick={() => onJoin(roomKey)}>
             <div className="room-icon">{roomDetails[roomKey].icon}</div>
-            <div className="room-name">{roomDetails[roomKey].name}</div>
+            <div className="room-info">
+              <div className="room-name">{roomDetails[roomKey].name}</div>
+              <div className="room-description">{roomDetails[roomKey].description}</div>
+            </div>
           </div>
         ))}
       </div>
