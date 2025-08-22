@@ -43,8 +43,8 @@ Siga os passos abaixo para rodar o projeto em sua máquina local.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [link-para-seu-repositorio-github]
-    cd [nome-da-pasta-do-projeto]
+    git clone https://github.com/Ma2903/Portal-Culinario.git
+    cd Portal-Culinario
     ```
 
 2.  **Configure e inicie o Backend:**
@@ -67,19 +67,11 @@ Siga os passos abaixo para rodar o projeto em sua máquina local.
 
 4.  Abra duas ou mais abas do navegador no endereço do frontend para simular uma conversa entre diferentes usuários.
 
-## 🖼️ Telas da Aplicação
-
-É altamente recomendável adicionar screenshots da sua aplicação aqui para demonstrar o visual e as funcionalidades!
-
-*(Exemplo de como adicionar uma imagem no Markdown)*
-`![Tela de Login](caminho/para/sua/imagem.png)`
-
 ## 👤 Autor
 
-Criado por **[Seu Nome]**.
+Criado por **Manoela Pinheiro da Silva**.
 
-- GitHub: `[link-do-seu-github]`
-- LinkedIn: `[link-do-seu-linkedin]`
+- GitHub: `https://github.com/Ma2903`
 
 ## 📜 Licença
 
