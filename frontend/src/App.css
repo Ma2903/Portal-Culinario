@@ -1,0 +1,206 @@
+/* --- Variáveis de Tema (Light & Dark) --- */
+:root {
+  --primary-color: #005ce6; /* Azul mais moderno */
+  --background-color: #f0f2f5;
+  --sidebar-background: #ffffff;
+  --chat-background: #e5ddd5;
+  --text-primary: #0b0b0b;
+  --text-secondary: #65676b;
+  --border-color: #e0e0e0;
+  --sent-bubble-background: #dcf8c6;
+  --received-bubble-background: #ffffff;
+  --hover-background: #f2f2f2;
+  --active-background: #e9e9e9;
+  --box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --primary-color: #3f8cff;
+  --background-color: #18191a;
+  --sidebar-background: #242526;
+  --chat-background: #0d1117;
+  --text-primary: #e4e6eb;
+  --text-secondary: #b0b3b8;
+  --border-color: #3a3b3c;
+  --sent-bubble-background: #264a27;
+  --received-bubble-background: #3a3b3c;
+  --hover-background: #3a3b3c;
+  --active-background: #4a4b4c;
+  --box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Animações --- */
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Layout Principal --- */
+.chat-container { background: var(--sidebar-background); }
+
+/* --- Sidebar Refinada --- */
+.sidebar { background-color: var(--sidebar-background); border-right: 1px solid var(--border-color); }
+.sidebar-header {
+    align-items: center;
+    gap: 10px;
+}
+.sidebar-header h3 { color: var(--text-primary); }
+.chat-list-item { transition: background-color 0.2s ease-in-out; border-bottom: 1px solid var(--border-color); }
+.chat-list-item:hover { background-color: var(--hover-background); }
+.chat-list-item.active {
+  background-color: var(--active-background);
+  position: relative;
+}
+.chat-list-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 4px;
+  background-color: var(--primary-color);
+  border-radius: 0 4px 4px 0;
+}
+.chat-item-name { color: var(--text-primary); }
+.chat-list-item.active .chat-item-name { font-weight: bold; }
+
+/* --- Área de Chat Refinada --- */
+.chat-area { background-color: var(--chat-background); }
+.chat-header {
+    background-color: var(--sidebar-background);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.chat-body { padding: 1rem 2rem; }
+.no-chat-selected h2 { color: var(--text-primary); }
+.no-chat-selected p { color: var(--text-secondary); }
+
+/* --- Estilo dos Balões de Mensagem --- */
+.message-wrapper {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 12px;
+  max-width: 70%;
+  animation: slideInUp 0.3s ease-out;
+}
+.avatar {
+  width: 35px; height: 35px; border-radius: 50%;
+  background-color: var(--primary-color); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; margin-right: 10px;
+}
+.message-bubble {
+  padding: 8px 12px;
+  border-radius: 18px;
+  box-shadow: var(--box-shadow);
+}
+.message-sender { font-size: 0.8rem; font-weight: bold; color: var(--primary-color); margin-bottom: 4px; }
+.message-text { color: var(--text-primary); word-wrap: break-word; }
+.message-timestamp {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 5px;
+  text-align: right;
+}
+.message-wrapper.received { align-self: flex-start; }
+.message-wrapper.received .message-bubble {
+  background-color: var(--received-bubble-background);
+  border-top-left-radius: 4px;
+}
+.message-wrapper.sent {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.message-wrapper.sent .avatar { display: none; }
+.message-wrapper.sent .message-bubble {
+  background-color: var(--sent-bubble-background);
+  border-top-right-radius: 4px;
+}
+.message-wrapper.sent .message-sender { display: none; }
+
+/* --- Rodapé e Input Refinados --- */
+.chat-footer {
+    background-color: var(--sidebar-background);
+    border-top: 1px solid var(--border-color);
+}
+.chat-footer input {
+    background-color: var(--hover-background);
+    color: var(--text-primary);
+    border: none;
+}
+
+/* --- Scrollbar Customizada --- */
+*::-webkit-scrollbar { width: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+[data-theme='dark'] *::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ... Estilos do modal, username, etc. ... */
+.modal-overlay, .lobby-container, .room-card, .username-container {
+    color: var(--text-primary);
+}
+.username-container {
+    background-color: var(--sidebar-background);
+}
+.room-card, .card {
+    background-color: var(--sidebar-background);
+}
+
+/* --- Estilos para o nosso Toggle customizado --- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 26px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+.toggle-icons {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
